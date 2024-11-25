@@ -1,7 +1,7 @@
 /*
   Board : Arduino UNO WiFi R2
-  Mode  : Server
-  Prog  : IoT
+  Mode  : IoT Server
+  
   Program is intended for teaching and learning (no https, no login)
 
   Using the program:
@@ -12,19 +12,18 @@
 
   Based on examples from https://docs.arduino.cc/tutorials/communication/wifi-nina-examples
 
-  Author: GitHub/OJStuff, march 24, 2024, v1.0
+  Author: GitHub/OJStuff, nov 25, 2024, v24.11
 */
 
-#define SERIAL_MONITOR_BAUDRATE 115200  // Serial monitor speed
-#define WL_RETRY_TIME 5000              // Wireless connect retry time in ms
+#define SERIAL_MONITOR_BAUDRATE 9600  // Serial monitor speed
+#define WL_RETRY_TIME 5000            // Wireless connect retry time in ms
 
 #include <SPI.h>              // Library for communication with the WiFi module
 #include <WiFiNINA.h>         // Library for using the WiFi module
 #include <arduino_secrets.h>  // Contains SSID_NAME and SSID_PASS. Comment out this line if you don't use arduino_secrets.h
 
 const String Board = "Arduino UNO WiFi R2";  // Board type
-const String Mode = "Server";                  // Board mode
-const String Prog = "IoT";                     // Brogram name
+const String Mode = "IoT Server";            // Board mode
 
 //  IPAddress ip(192, 168, 1, 2);  // If you want static IP, define it here. Check WiFiServerConnect() below.
 //  https://www.arduino.cc/reference/en/libraries/wifinina/wifi.config/
@@ -75,7 +74,7 @@ const int ADC_max = 1023;            // ADC is 10 bits, 0-1023
 const float ADC_ref = 5.0;           // ADC voltage reference
 
 const String PMN[] = { "Input", "Output" };  // Digital Port Mode Name
-const String DPVN[] = { "Off", "On" };       // Digital Port state Value Name
+const String DPVN[] = { "off", "on" };       // Digital Port state Value Name
 const String DPVC[] = { "red", "green" };    // Digital Port state Value Color (HTML font color name)
 
 void setup() {
@@ -112,8 +111,6 @@ void setup() {
 
   // Inform that Arduino server is ready
   Serial.print(Board);
-  Serial.print(" ");
-  Serial.print(Prog);
   Serial.print(" - ");
   Serial.print(Mode);
   Serial.println(" ready...");
@@ -216,7 +213,7 @@ void ServerResponse() {
   client.println("<br>");
   client.println("<a href=/><button>Home</button></a>");  // "HOME" button
 
-  client.println("<body><h2>" + Board + " " + Prog + " - " + Mode + "</h2>");  // Page header
+  client.println("<body><h2>" + Board + " - " + Mode + "</h2>");  // Page header
 
   if (Touchcontrol) {  // Handle activation for touchcontrol for sliders
     client.print("<p><input checked type='checkbox' name='touch' value='off' id='radio1' ");
@@ -297,8 +294,7 @@ String HTML_AP(String Name, String Mode, String Control, float Value, String Com
 }
 
 String HTML_WiFi() {  // Create HTML for WiFi status
-  return ("* Arduino IP : " + WiFiIP_Str() + " (" + WiFiMAC_Str() + ") * Signal : " + WiFiRSSI_Str()
-          + " dBm * SSID : " + String(ssid) + " * Client IP : " + Client_IP_Str());
+  return ("Network info: SSID=" + String(ssid) + ", uC IP=" + WiFiIP_Str() + ", uC MAC=" + WiFiMAC_Str());
 }
 
 void WiFiServerConnect() {          // Connect to WiFi network
